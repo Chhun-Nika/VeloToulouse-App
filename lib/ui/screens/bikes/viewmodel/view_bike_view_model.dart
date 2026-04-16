@@ -8,6 +8,7 @@ class ViewBikeViewModel extends ChangeNotifier {
   final String stationId;
 
   AsyncValue<List<Bike>> bikesValue = AsyncValue.loading();
+  Bike? selectedBike;
 
   ViewBikeViewModel({required this.bikeRepository, required this.stationId}) {
     _init();
@@ -30,4 +31,11 @@ class ViewBikeViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void selectBike(Bike bike) {
+    selectedBike = bike;
+    notifyListeners();
+  }
+
+  bool isBikeSelected(Bike bike) => selectedBike == bike;
 }
