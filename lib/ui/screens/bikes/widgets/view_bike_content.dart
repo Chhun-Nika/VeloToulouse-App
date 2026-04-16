@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:velo_toulouse_app/model/bike.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/viewmodel/view_bike_view_model.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/widgets/bike_tile.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
 import 'package:velo_toulouse_app/ui/utils/async_value.dart';
+import 'package:velo_toulouse_app/ui/widgets/bike_modal.dart';
 
 class ViewBikeContent extends StatelessWidget {
   const ViewBikeContent({super.key});
@@ -38,11 +40,29 @@ class ViewBikeContent extends StatelessWidget {
             itemCount: bikes.length,
             itemBuilder: (context, index) {
               final bike = bikes[index];
+              final isAvailable = bike.bikeStatus == BikeStatus.available;
 
               return BikeTile(
                 bike: bike,
-                onTap: () => {
-                  vm.selectBike(bike)
+                onTap: () {
+                  if (!isAvailable) return;
+                  vm.selectBike(bike);
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    isScrollControlled: true,
+                    builder: (_) {
+                      return BikeModal(
+                        message:
+                            "Tap 'Book a Bike' to review your booking details.",
+                        buttonText: "Book a Bike",
+                        onPressed: () {
+                          Navigator.pop(context);
+                          // navigate to booking screen
+                        },
+                      );
+                    },
+                  );
                 },
                 isSelected: vm.isBikeSelected(bike),
               );
