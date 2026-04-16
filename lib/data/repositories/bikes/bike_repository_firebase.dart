@@ -7,18 +7,39 @@ import 'package:velo_toulouse_app/data/repositories/bikes/bike_repository.dart';
 import 'package:velo_toulouse_app/model/bike.dart';
 
 class BikeRepositoryFirebase implements BikeRepository {
+  static const String _bikesPath = '/bikes';
+
   @override
   Future<List<Bike>> getBikesByStation(String stationId) async {
-    final Uri bikeUri = FirebaseConfig.baseUri.replace(path: '/bike.json');
+    final Uri bikeUri = FirebaseConfig.baseUri.replace(
+      path: '$_bikesPath.json',
+    );
     final http.Response response = await http.get(bikeUri);
 
     if (response.statusCode == 200) {
-      // 1 - Send the retrieved list of songs
-      Map<String, dynamic> bikesJson = json.decode(response.body);
+      // 1 - Send the retrieved list of bikes
+      final decodedBody = json.decode(response.body);
+      if (decodedBody == null) {
+        return [];
+      }
+
+      if (decodedBody is! Map<String, dynamic>) {
+        throw FormatException('Expected bikes data to be a map.');
+      }
+
+      Map<String, dynamic> bikesJson = decodedBody;
       List<Bike> result = [];
 
       for (var bikeEntry in bikesJson.entries) {
-        Bike bike = BikeDto.fromJson(bikeEntry.key, bikeEntry.value);
+        final bikeJson = bikeEntry.value;
+        if (bikeJson is! Map) {
+          continue;
+        }
+
+        Bike bike = BikeDto.fromJson(
+          bikeEntry.key,
+          Map<String, dynamic>.from(bikeJson),
+        );
 
         // filter by stationId
         if (bike.stationId == stationId) {
@@ -36,7 +57,7 @@ class BikeRepositoryFirebase implements BikeRepository {
   @override
   Future<void> markBikeAsBooked(String bikeId) async {
     final Uri bikeUri = FirebaseConfig.baseUri.replace(
-      path: '/bikes/$bikeId.json',
+      path: '$_bikesPath/$bikeId.json',
     );
 
     await http.patch(bikeUri, body: json.encode({'status': 'booked'}));
