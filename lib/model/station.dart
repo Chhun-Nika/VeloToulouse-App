@@ -1,17 +1,13 @@
 import 'package:uuid/uuid.dart';
+import 'package:velo_toulouse_app/model/location.dart';
 
 var uuid = Uuid();
 
 class Station {
   final String id;
   final String name;
-  final double latitude;
-  final double longtitude;
+  final Location location;
 
-  Station({
-    String? id,
-    required this.name,
-    required this.latitude,
-    required this.longtitude,
-  }) : id = id ?? uuid.v4();
+  Station({String? id, required this.name, required this.location})
+    : id = id ?? uuid.v4();
 }
