@@ -1,0 +1,33 @@
+import 'package:flutter/widgets.dart';
+import 'package:velo_toulouse_app/data/repositories/bikes/bike_repository.dart';
+import 'package:velo_toulouse_app/model/bike.dart';
+import 'package:velo_toulouse_app/ui/utils/async_value.dart';
+
+class ViewBikeViewModel extends ChangeNotifier {
+  final BikeRepository bikeRepository;
+  final String stationId;
+
+  AsyncValue<List<Bike>> bikesValue = AsyncValue.loading();
+
+  ViewBikeViewModel({required this.bikeRepository, required this.stationId}) {
+    _init();
+  }
+
+  void _init() async {
+    fetchBikesByStationId(stationId);
+  }
+
+  void fetchBikesByStationId(String stationId) async {
+    bikesValue = AsyncValue.loading();
+    notifyListeners();
+
+    try {
+      List<Bike> bikes = await bikeRepository.getBikesByStation(stationId);
+      bikesValue = AsyncValue.success(bikes);
+      notifyListeners();
+    } catch (e) {
+      bikesValue = AsyncValue.error(e);
+      notifyListeners();
+    }
+  }
+}
