@@ -1,29 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:velo_toulouse_app/ui/theme/theme.dart';
+import 'package:provider/provider.dart';
 
-// add multi provider later
-void mainCommon() {
-  runApp(MyApp());
+import 'ui/screens/bookings_history/booking_history_screen.dart';
+import 'ui/screens/map/map_screen.dart';
+import 'ui/theme/theme.dart';
+
+// main
+void mainCommon(List<InheritedProvider> providers) {
+  runApp(
+    MultiProvider(
+      providers: providers,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: blaTheme,
+        home: const MyApp(),
+      ),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  int _currentIndex = 0;
+
+  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen()];
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(title: Text("veloToulouse", style: AppText.heading,),),
-       body: Center(
-          child: ShaderMask(
-            shaderCallback: (bounds) =>
-                AppGradient.primary.createShader(bounds),
-            child: Text(
-              "Welcome",
-              style: AppText.body.copyWith(color: AppColor.white)
-            ),
+    return Scaffold(
+      body: IndexedStack(index: _currentIndex, children: _pages),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: AppColor.white,
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        selectedItemColor: AppColor.primary,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.map_outlined), label: 'Map'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.confirmation_num_outlined),
+            label: 'Bookings',
           ),
-        ),
+        ],
       ),
     );
   }
