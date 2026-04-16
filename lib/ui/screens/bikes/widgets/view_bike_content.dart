@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/viewmodel/view_bike_view_model.dart';
+import 'package:velo_toulouse_app/ui/screens/bikes/widgets/bike_tile.dart';
+import 'package:velo_toulouse_app/ui/theme/theme.dart';
 import 'package:velo_toulouse_app/ui/utils/async_value.dart';
 
 class ViewBikeContent extends StatelessWidget {
@@ -37,7 +39,13 @@ class ViewBikeContent extends StatelessWidget {
             itemBuilder: (context, index) {
               final bike = bikes[index];
 
-              return ListTile(title: Text(bike.bikeCode));
+              return BikeTile(
+                bike: bike,
+                onTap: () => {
+                  vm.selectBike(bike)
+                },
+                isSelected: vm.isBikeSelected(bike),
+              );
             },
           );
         }
@@ -45,13 +53,30 @@ class ViewBikeContent extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text("View All Bikes")),
+      appBar: AppBar(
+        backgroundColor: AppColor.white,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Container(height: 1, color: const Color(0x40DBDBDB)),
+        ),
+        title: Text(
+          "Available Bikes",
+          style: AppText.heading.copyWith(color: AppColor.neutralDark),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16),
-            Text("selected bike"),
+            Text(
+              "Select a bike",
+              style: AppText.body.copyWith(
+                color: AppColor.neutralDark,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             SizedBox(height: 15),
             Expanded(child: content),
           ],
