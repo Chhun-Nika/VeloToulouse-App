@@ -1,3 +1,6 @@
+
+import '../../../model/station.dart';
+
 abstract class StationRepository {
-  Future<List<String>> getAllStations();
+  Future<List<Station>> getAllStations();
 }
