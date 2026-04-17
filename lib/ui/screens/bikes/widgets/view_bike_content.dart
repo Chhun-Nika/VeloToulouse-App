@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:velo_toulouse_app/ui/screens/booking/booking_screen.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/viewmodel/view_bike_view_model.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/widgets/bike_tile.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
@@ -100,7 +101,19 @@ class ViewBikeContent extends StatelessWidget {
               message: "Tap 'Book a Bike' to review your booking details.",
               buttonText: "Book a Bike",
               onPressed: () {
-                // navigate to booking screen
+                final item = vm.selectedItem;
+                final bike = item?.bike;
+                if (item == null || bike == null) {
+                  return;
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        BookingScreen(),
+                  ),
+                );
               },
             ),
     );
