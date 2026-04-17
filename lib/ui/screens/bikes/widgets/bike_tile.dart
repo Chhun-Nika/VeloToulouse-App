@@ -4,14 +4,18 @@ import 'package:velo_toulouse_app/ui/theme/theme.dart';
 
 class BikeTile extends StatelessWidget {
   final Bike bike;
+  final int index;
   final VoidCallback onTap;
   final bool isSelected;
+  final bool isAvailable;
 
   const BikeTile({
     super.key,
     required this.bike,
     required this.onTap,
     required this.isSelected,
+    required this.index,
+    required this.isAvailable,
   });
 
   @override
@@ -28,28 +32,80 @@ class BikeTile extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: borderColor, width: 1),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Bike Number',
-                style: AppText.label.copyWith(color: AppColor.neutralLight),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: borderColor, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Slot',
+                      style: AppText.label.copyWith(
+                        color: AppColor.neutralLight,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '${index + 1}',
+                      style: AppText.body.copyWith(
+                        color: AppColor.neutralDark,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: 8),
-              Text(
-                bike.bikeCode,
-                style: AppText.body.copyWith(color: AppColor.neutralDark),
+            ),
+            const SizedBox(width: 10,),
+            Expanded(
+              flex: 4,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: borderColor, width: 1),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isAvailable ? 'Bike Number' : 'Bike is already booked',
+                      style: AppText.label.copyWith(
+                        color: AppColor.neutralLight,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      isAvailable ? bike.bikeCode : 'Empty slot',
+                      style: AppText.body.copyWith(
+                        color: isAvailable
+                            ? AppColor.neutralDark
+                            : AppColor.neutralLight,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

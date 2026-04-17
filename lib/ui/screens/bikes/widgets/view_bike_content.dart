@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:velo_toulouse_app/model/bike.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/viewmodel/view_bike_view_model.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/widgets/bike_tile.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
@@ -40,7 +39,7 @@ class ViewBikeContent extends StatelessWidget {
             itemCount: bikes.length,
             itemBuilder: (context, index) {
               final bike = bikes[index];
-              final isAvailable = bike.bikeStatus == BikeStatus.available;
+              final isAvailable = vm.isAvailable(bike);
 
               return BikeTile(
                 bike: bike,
@@ -64,7 +63,9 @@ class ViewBikeContent extends StatelessWidget {
                     },
                   );
                 },
-                isSelected: vm.isBikeSelected(bike),
+                isSelected: vm.isBikeSelected(bike), 
+                index: index, 
+                isAvailable: isAvailable, 
               );
             },
           );

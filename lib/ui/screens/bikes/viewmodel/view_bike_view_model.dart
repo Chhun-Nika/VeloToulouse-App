@@ -38,4 +38,9 @@ class ViewBikeViewModel extends ChangeNotifier {
   }
 
   bool isBikeSelected(Bike bike) => selectedBike == bike;
+
+  bool isAvailable(Bike bike) {
+    return bike.bikeStatus == BikeStatus.available;
+  }
+
 }
