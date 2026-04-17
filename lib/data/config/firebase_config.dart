@@ -1,5 +1,5 @@
 class FirebaseConfig {
   static final Uri baseUri = Uri.https(
-    'velotoulouse-project-default-rtdb.firebaseio.com',
+    'mobile-final-f5c7e-default-rtdb.firebaseio.com',
   );
 }

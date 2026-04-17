@@ -1,6 +1,6 @@
 import '../../../model/bike.dart';
 
 abstract class BikeRepository {
-  Future<List<Bike>> getBikesByStation(String stationId);
+  Future<List<Bike>> getAllBikes();
   Future<void> markBikeAsBooked(String bikeId);
 }
