@@ -42,17 +42,17 @@ class ViewBikeContent extends StatelessWidget {
               final item = items[index];
               final isAvailable = vm.isAvailable(item);
 
-              // return BikeTile(
-              //   bike: item.bike,
-              //   index: item.slot.index,
-              //   onTap: () {
-              //     if (!isAvailable) return;
+              return BikeTile(
+                bike: item.bike,
+                index: item.slot.index,
+                onTap: () {
+                  if (!isAvailable) return;
 
-              //     vm.selectItem(item);
-              //   },
-              //   isSelected: vm.isItemSelected(item),
-              //   isAvailable: isAvailable,
-              // );
+                  vm.selectItem(item);
+                },
+                isSelected: vm.isItemSelected(item),
+                isAvailable: isAvailable,
+              );
             },
           );
         }

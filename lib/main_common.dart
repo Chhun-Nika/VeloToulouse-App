@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:velo_toulouse_app/ui/screens/bikes/testing.dart';
 
 import 'ui/screens/bookings_history/booking_history_screen.dart';
 import 'ui/screens/map/map_screen.dart';
