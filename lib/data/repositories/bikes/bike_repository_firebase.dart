@@ -10,11 +10,11 @@ class BikeRepositoryFirebase implements BikeRepository {
   static const String _bikesPath = '/bikes';
 
   @override
-  Future<List<Bike>> getBikesByStation(String stationId) async {
-    final Uri bikeUri = FirebaseConfig.baseUri.replace(
+  Future<List<Bike>> getAllBikes() async {
+    final Uri bikesUri = FirebaseConfig.baseUri.replace(
       path: '$_bikesPath.json',
     );
-    final http.Response response = await http.get(bikeUri);
+    final http.Response response = await http.get(bikesUri);
 
     if (response.statusCode == 200) {
       // 1 - Send the retrieved list of bikes
@@ -41,10 +41,7 @@ class BikeRepositoryFirebase implements BikeRepository {
           Map<String, dynamic>.from(bikeJson),
         );
 
-        // filter by stationId
-        if (bike.stationId == stationId) {
-          result.add(bike);
-        }
+        result.add(bike);
       }
 
       return result;

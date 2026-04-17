@@ -23,7 +23,8 @@ class ViewBikeViewModel extends ChangeNotifier {
     notifyListeners();
 
     try {
-      List<Bike> bikes = await bikeRepository.getBikesByStation(stationId);
+      // List<Bike> bikes = await bikeRepository.getBikesByStation(stationId);
+      List<Bike> bikes = await bikeRepository.getAllBikes(); // will be remove later 
       bikesValue = AsyncValue.success(bikes);
       notifyListeners();
     } catch (e) {
@@ -42,5 +43,4 @@ class ViewBikeViewModel extends ChangeNotifier {
   bool isAvailable(Bike bike) {
     return bike.bikeStatus == BikeStatus.available;
   }
-
 }
