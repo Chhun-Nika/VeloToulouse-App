@@ -31,7 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen(), Testing()];
+  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen(),];
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +60,6 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.confirmation_num_outlined),
               label: 'Bookings',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.confirmation_num_outlined),
-              label: 'Testing',
             ),
           ],
         ),
