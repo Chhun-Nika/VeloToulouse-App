@@ -84,6 +84,7 @@ class BookingViewModel extends ChangeNotifier {
     try {
       final booking = Booking(
         bikeId: bikeId,
+        stationId: stationId,
         paymentMethod: selectedPaymentMethod,
       );
 
