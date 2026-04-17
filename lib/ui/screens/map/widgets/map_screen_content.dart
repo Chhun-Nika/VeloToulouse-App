@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:velo_toulouse_app/model/station.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
 
-import '../../../../model/station.dart';
 import '../../../utils/async_value.dart';
 import '../../station_search/station_search_screen.dart';
 import '../viewmodel/map_view_model.dart';
+import 'station_info_bottom_sheet.dart';
 
 class MapScreenContent extends StatefulWidget {
   const MapScreenContent({super.key});
@@ -32,6 +33,14 @@ class _MapScreenContentState extends State<MapScreenContent> {
     );
   }
 
+  Future<void> _showStationBottomSheet(Station station) async {
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => StationInfoBottomSheet(station: station),
+    );
+  }
+
   Future<void> onSearchBarTap(BuildContext context) async {
     final vm = context.read<StationViewModel>();
 
@@ -50,6 +59,18 @@ class _MapScreenContentState extends State<MapScreenContent> {
 
     vm.selectStation(selectedStation);
     await _moveToStation(selectedStation);
+  }
+
+  Set<Marker> _buildMarkers(List<Station> stations) {
+    return stations.map((station) {
+      return Marker(
+        markerId: MarkerId(station.id),
+        position: LatLng(station.location.latitude, station.location.longitude),
+        onTap: () {
+          _showStationBottomSheet(station);
+        },
+      );
+    }).toSet();
   }
 
   @override
@@ -74,9 +95,10 @@ class _MapScreenContentState extends State<MapScreenContent> {
         break;
 
       case AsyncValueState.success:
+        final stations = asyncValue.data!;
         content = GoogleMap(
           initialCameraPosition: _initialPosition,
-          markers: vm.markers,
+          markers: _buildMarkers(stations),
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
           onMapCreated: (controller) {

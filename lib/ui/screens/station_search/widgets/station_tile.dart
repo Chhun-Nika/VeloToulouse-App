@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:velo_toulouse_app/ui/theme/theme.dart';
-
 import '../../../../model/station.dart';
 
 class StationTile extends StatelessWidget {
