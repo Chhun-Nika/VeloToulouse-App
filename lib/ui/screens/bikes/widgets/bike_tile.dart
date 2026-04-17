@@ -3,7 +3,7 @@ import 'package:velo_toulouse_app/model/bike.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
 
 class BikeTile extends StatelessWidget {
-  final Bike bike;
+  final Bike? bike;
   final int index;
   final VoidCallback onTap;
   final bool isSelected;
@@ -20,92 +20,91 @@ class BikeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isEmpty = bike == null;
+    final bool isDisabled = isEmpty || !isAvailable;
     final Color borderColor = isSelected
         ? AppColor.primary
-        : AppColor.neutralLight;
+        : isEmpty
+        ? const Color(0xFFE4E4E4)
+        : const Color(0xFFFFA3A3);
     final Color backgroundColor = isSelected
         ? const Color(0xFFFFF3F2)
+        : isEmpty
+        ? const Color(0xFFFAFAFA)
         : AppColor.white;
+    final Color titleColor = isDisabled
+        ? AppColor.neutralLight
+        : AppColor.neutral;
+    final Color valueColor = isDisabled
+        ? AppColor.neutralLight
+        : AppColor.neutralDark;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: borderColor, width: 1),
-                ),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: borderColor, width: 1),
+          ),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 42,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Slot',
-                      style: AppText.label.copyWith(
-                        color: AppColor.neutralLight,
-                      ),
+                      style: AppText.label.copyWith(color: titleColor),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      '${index + 1}',
+                      '$index',
                       style: AppText.body.copyWith(
-                        color: AppColor.neutralDark,
+                        color: valueColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(width: 10,),
-            Expanded(
-              flex: 4,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 16,
-                ),
-                decoration: BoxDecoration(
-                  color: backgroundColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: borderColor, width: 1),
-                ),
+              Container(
+                width: 1,
+                height: 40,
+                margin: const EdgeInsets.symmetric(horizontal: 18),
+                color: const Color(0xFFE8E8E8),
+              ),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isAvailable ? 'Bike Number' : 'Bike is already booked',
-                      style: AppText.label.copyWith(
-                        color: AppColor.neutralLight,
-                      ),
+                      isEmpty
+                          ? 'Empty'
+                          : isAvailable
+                          ? 'Bike Number'
+                          : 'Bike is not available',
+                      style: AppText.label.copyWith(color: titleColor),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      isAvailable ? bike.bikeCode : 'Empty slot',
+                      bike?.bikeCode ?? 'No bike docked',
                       style: AppText.body.copyWith(
-                        color: isAvailable
-                            ? AppColor.neutralDark
-                            : AppColor.neutralLight,
+                        color: valueColor,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -30,7 +30,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen()];
+  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen(),];
 
   @override
   Widget build(BuildContext context) {

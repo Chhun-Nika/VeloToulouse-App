@@ -1,46 +1,82 @@
-// import 'package:flutter/widgets.dart';
-// import 'package:velo_toulouse_app/data/repositories/bikes/bike_repository.dart';
-// import 'package:velo_toulouse_app/model/bike.dart';
-// import 'package:velo_toulouse_app/ui/utils/async_value.dart';
+import 'package:flutter/widgets.dart';
+import 'package:velo_toulouse_app/data/repositories/bikes/bike_repository.dart';
+import 'package:velo_toulouse_app/data/repositories/slots/slot_repository.dart';
+import 'package:velo_toulouse_app/model/bike.dart';
+import 'package:velo_toulouse_app/model/slot.dart';
+import 'package:velo_toulouse_app/ui/utils/async_value.dart';
 
-// class ViewBikeViewModel extends ChangeNotifier {
-//   final BikeRepository bikeRepository;
-//   final String stationId;
+class ViewBikeViewModel extends ChangeNotifier {
+  final BikeRepository bikeRepository;
+  final SlotRepository slotRepository;
+  final String stationId;
 
-//   AsyncValue<List<Bike>> bikesValue = AsyncValue.loading();
-//   Bike? selectedBike;
+  AsyncValue<List<BikeSlotItem>> bikesValue = AsyncValue.loading();
+  BikeSlotItem? selectedItem;
 
-//   ViewBikeViewModel({required this.bikeRepository, required this.stationId}) {
-//     _init();
-//   }
+  ViewBikeViewModel({
+    required this.bikeRepository,
+    required this.slotRepository,
+    required this.stationId,
+  }) {
+    _init();
+  }
 
-//   void _init() async {
-//     fetchBikesByStationId(stationId);
-//   }
+  void _init() {
+    fetchBikeSlotItems(stationId);
+  }
 
-//   void fetchBikesByStationId(String stationId) async {
-//     bikesValue = AsyncValue.loading();
-//     notifyListeners();
+  Future<void> fetchBikeSlotItems(String stationId) async {
+    bikesValue = AsyncValue.loading();
+    notifyListeners();
 
-//     try {
-//       // List<Bike> bikes = await bikeRepository.getBikesByStation(stationId);
-//       List<Bike> bikes = await bikeRepository.getAllBikes(); // will be remove later 
-//       bikesValue = AsyncValue.success(bikes);
-//       notifyListeners();
-//     } catch (e) {
-//       bikesValue = AsyncValue.error(e);
-//       notifyListeners();
-//     }
-//   }
+    try {
+      List<Slot> slots = await slotRepository.getSlotsByStation(stationId);
+      List<BikeSlotItem> result = [];
 
-//   void selectBike(Bike bike) {
-//     selectedBike = bike;
-//     notifyListeners();
-//   }
+      for (var slot in slots) {
+        Bike? bike;
 
-//   bool isBikeSelected(Bike bike) => selectedBike == bike;
+        if (slot.bikeId != null) {
+          bike = await bikeRepository.getBikeById(stationId, slot.bikeId!);
+        }
 
-//   bool isAvailable(Bike bike) {
-//     return bike.bikeStatus == BikeStatus.available;
-//   }
-// }
+        result.add(BikeSlotItem(slot: slot, bike: bike));
+      }
+
+      bikesValue = AsyncValue.success(result);
+      notifyListeners();
+    } catch (e) {
+      bikesValue = AsyncValue.error(e);
+      notifyListeners();
+    }
+  }
+
+  void selectItem(BikeSlotItem item) {
+    if (!isAvailable(item)) {
+      return;
+    }
+
+    selectedItem = item;
+    notifyListeners();
+  }
+
+  bool isItemSelected(BikeSlotItem item) {
+    return selectedItem?.slot.id == item.slot.id;
+  }
+
+  bool isAvailable(BikeSlotItem item) {
+    return item.hasBike && item.slot.slotStatus == SlotStatus.occupied;
+  }
+}
+
+class BikeSlotItem {
+  final Slot slot;
+  final Bike? bike;
+
+  BikeSlotItem({required this.slot, required this.bike});
+
+  bool get hasBike => bike != null;
+  bool get isEmpty => bike == null || slot.slotStatus == SlotStatus.available;
+}
+
+

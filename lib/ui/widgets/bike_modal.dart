@@ -17,10 +17,18 @@ class BikeModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColor.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1A000000),
+            blurRadius: 16,
+            offset: Offset(0, -4),
+          ),
+        ],
       ),
       child: SafeArea(
         child: Column(
