@@ -110,8 +110,11 @@ class ViewBikeContent extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        BookingScreen(),
+                    builder: (_) => BookingScreen(
+                      stationId: vm.stationId,
+                      slotId: item.slot.id,
+                      bikeId: bike.id,
+                    ),
                   ),
                 );
               },

@@ -66,7 +66,7 @@ class SlotRepositoryFirebase implements SlotRepository {
   }
 
   @override
-  Future<void> markSlotAsBooked({
+  Future<void> markSlotAsAvailable({
     required String stationId,
     required String slotId,
   }) async {
@@ -82,7 +82,10 @@ class SlotRepositoryFirebase implements SlotRepository {
 
     final http.Response response = await http.patch(
       slotUri,
-      body: json.encode({'status': SlotStatus.occupied.name}),
+      body: json.encode({
+        'status': SlotStatus.available.name,
+        'bikeId': null,
+      }),
     );
 
     if (response.statusCode != 200) {
