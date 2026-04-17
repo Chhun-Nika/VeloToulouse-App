@@ -3,20 +3,58 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
 
+import '../../../../model/station.dart';
 import '../../../utils/async_value.dart';
+import '../../station_search/station_search_screen.dart';
 import '../viewmodel/map_view_model.dart';
 
-class MapScreenContent extends StatelessWidget {
+class MapScreenContent extends StatefulWidget {
   const MapScreenContent({super.key});
 
+  @override
+  State<MapScreenContent> createState() => _MapScreenContentState();
+}
+
+class _MapScreenContentState extends State<MapScreenContent> {
   static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(11.5564, 104.9282), // Phnom Penh
+    target: LatLng(11.5564, 104.9282),
     zoom: 14,
   );
 
+  GoogleMapController? _mapController;
+
+  Future<void> _moveToStation(Station station) async {
+    await _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        LatLng(station.location.latitude, station.location.longitude),
+        16,
+      ),
+    );
+  }
+
+  Future<void> onSearchBarTap(BuildContext context) async {
+    final vm = context.read<StationViewModel>();
+
+    final Station? selectedStation = await Navigator.push<Station?>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            StationSearchScreen(initSearchText: vm.selectedStation?.name ?? ""),
+      ),
+    );
+
+    if (selectedStation == null) {
+      vm.clearSelectedStation();
+      return;
+    }
+
+    vm.selectStation(selectedStation);
+    await _moveToStation(selectedStation);
+  }
+
   @override
   Widget build(BuildContext context) {
-    StationViewModel vm = context.watch<StationViewModel>();
+    final vm = context.watch<StationViewModel>();
     final asyncValue = vm.stationsValue;
 
     Widget content;
@@ -41,6 +79,9 @@ class MapScreenContent extends StatelessWidget {
           markers: vm.markers,
           myLocationButtonEnabled: false,
           zoomControlsEnabled: false,
+          onMapCreated: (controller) {
+            _mapController = controller;
+          },
         );
         break;
     }
@@ -49,8 +90,8 @@ class MapScreenContent extends StatelessWidget {
       children: [
         content,
         Container(
-          padding: EdgeInsets.all(AppSpacing.m),
-          height: 230,
+          padding: const EdgeInsets.all(AppSpacing.m),
+          height: 210,
           width: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -62,7 +103,7 @@ class MapScreenContent extends StatelessWidget {
                 Colors.white.withValues(alpha: 0.3),
                 Colors.white.withValues(alpha: 0.1),
               ],
-              stops: [0.80, 0.90, 0.97, 1.0],
+              stops: const [0.80, 0.90, 0.97, 1.0],
             ),
           ),
           child: SafeArea(
@@ -77,30 +118,37 @@ class MapScreenContent extends StatelessWidget {
                     style: AppText.heading.copyWith(color: AppColor.white),
                   ),
                 ),
+                const SizedBox(height: AppSpacing.s),
                 InkWell(
                   borderRadius: BorderRadius.circular(36),
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (_) => const SearchPage()),
-                    // );
-                    print("search tap");
-                  },
+                  onTap: () => onSearchBarTap(context),
                   child: Container(
-                    
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.m,
+                      vertical: AppSpacing.s,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(36),
-                      border: Border.all(color: Color(0xFFD9D9D9)),
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.radiusLarge,
+                      ),
+                      border: Border.all(color: const Color(0xFFD9D9D9)),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.search_rounded, color: Color(0xFF8C939D)),
-                        SizedBox(width: 12),
-                        Text(
-                          "Search",
-                          style: TextStyle(color: Color(0xFF8C939D)),
+                        Icon(Icons.search_rounded, color: AppColor.neutral),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            vm.selectedStation?.name ?? "Search station",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppText.body.copyWith(
+                              color: vm.selectedStation == null
+                                  ? AppColor.textLight
+                                  : AppColor.neutralDark,
+                            ),
+                          ),
                         ),
                       ],
                     ),
