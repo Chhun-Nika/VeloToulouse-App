@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:velo_toulouse_app/data/repositories/bikes/bike_repository.dart';
+import 'package:velo_toulouse_app/data/repositories/slots/slot_repository.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/viewmodel/view_bike_view_model.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/widgets/view_bike_content.dart';
 
@@ -10,6 +11,13 @@ class ViewBikeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('View bike screen');
+    return ChangeNotifierProvider(
+      create: (context) => ViewBikeViewModel(
+        bikeRepository: context.read<BikeRepository>(),
+        slotRepository: context.read<SlotRepository>(),
+        stationId: stationId,
+      ),
+      child: const ViewBikeContent(),
+    );
   }
 }

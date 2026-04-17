@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:velo_toulouse_app/ui/screens/bikes/testing.dart';
 
 import 'ui/screens/bookings_history/booking_history_screen.dart';
 import 'ui/screens/map/map_screen.dart';
@@ -30,7 +31,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen()];
+  final List<Widget> _pages = const [MapScreen(), BookingHistoryScreen(), Testing()];
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +60,10 @@ class _MyAppState extends State<MyApp> {
             BottomNavigationBarItem(
               icon: Icon(Icons.confirmation_num_outlined),
               label: 'Bookings',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.confirmation_num_outlined),
+              label: 'Testing',
             ),
           ],
         ),
