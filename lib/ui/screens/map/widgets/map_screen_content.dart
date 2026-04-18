@@ -34,10 +34,16 @@ class _MapScreenContentState extends State<MapScreenContent> {
   }
 
   Future<void> _showStationBottomSheet(Station station) async {
+    final vm = context.read<StationViewModel>();
+    vm.loadAvailableBikeCount(station.id);
+
     await showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (_) => StationInfoBottomSheet(station: station),
+      builder: (_) => ChangeNotifierProvider.value(
+        value: vm,
+        child: StationInfoBottomSheet(station: station),
+      ),
     );
   }
 

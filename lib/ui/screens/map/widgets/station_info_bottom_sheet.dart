@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:velo_toulouse_app/model/station.dart';
+import 'package:velo_toulouse_app/ui/screens/map/viewmodel/map_view_model.dart';
 import 'package:velo_toulouse_app/ui/screens/bikes/view_bike_screen.dart';
 import 'package:velo_toulouse_app/ui/theme/theme.dart';
+import 'package:velo_toulouse_app/ui/utils/async_value.dart';
 
 class StationInfoBottomSheet extends StatelessWidget {
   const StationInfoBottomSheet({super.key, required this.station});
@@ -10,6 +13,16 @@ class StationInfoBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final vm = context.watch<StationViewModel>();
+    final availabilityValue = vm.getAvailableBikeCount(station.id);
+    final availabilityLabel = vm.getAvailableBikeLabel(station.id);
+    final shouldDisableBooking = vm.shouldDisableBooking(station.id);
+    final availabilityColor =
+        availabilityValue.state == AsyncValueState.success &&
+            availabilityValue.data == 0
+        ? AppColor.primary
+        : AppColor.neutralDark;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 24),
       decoration: const BoxDecoration(
@@ -110,10 +123,10 @@ class StationInfoBottomSheet extends StatelessWidget {
                 const SizedBox(width: 16),
                 Expanded(
                   child: Text(
-                    "12 Available Bikes",
+                    availabilityLabel,
                     style: AppText.heading.copyWith(
                       fontSize: 18,
-                      color: AppColor.neutralDark,
+                      color: availabilityColor,
                     ),
                   ),
                 ),
@@ -139,20 +152,27 @@ class StationInfoBottomSheet extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColor.primary,
                   foregroundColor: Colors.white,
+                  disabledBackgroundColor: AppColor.primary.withValues(
+                    alpha: 0.45,
+                  ),
+                  disabledForegroundColor: Colors.white.withValues(alpha: 0.8),
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ViewBikeScreen(stationId: station.id),
-                    ),
-                  );
-                },
+                onPressed: shouldDisableBooking
+                    ? null
+                    : () {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ViewBikeScreen(stationId: station.id),
+                          ),
+                        );
+                      },
                 child: Text(
                   "Book Now",
                   style: AppText.body.copyWith(
