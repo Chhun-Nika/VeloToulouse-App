@@ -40,16 +40,6 @@ class _StationSearchBarState extends State<StationSearchBar> {
   }
 
   @override
-  void didUpdateWidget(covariant StationSearchBar oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.initSearchText != widget.initSearchText &&
-        _searchController.text != widget.initSearchText) {
-      _searchController.text = widget.initSearchText;
-    }
-  }
-
-  @override
   void dispose() {
     _searchController.dispose();
     _focusNode.dispose();
