@@ -8,16 +8,16 @@ class BookingDto {
 
   static Booking fromJson(String id, Map<String, dynamic> json) {
     assert(json[bikeIdKey] is String);
-    assert(json[stationIdKey] is String);
+    assert(json[stationIdKey] == null || json[stationIdKey] is String);
     assert(json[paymentMethodKey] is String);
     assert(json[createdAtKey] is String);
 
     return Booking(
       id: id,
       bikeId: json[bikeIdKey],
-      stationId: json[stationIdKey],
+      stationId: json[stationIdKey] ?? '',
       paymentMethod: _getPaymentMethod(json[paymentMethodKey]),
-      createdAt: json[createdAtKey],
+      createdAt: DateTime.parse(json[createdAtKey]),
     );
   }
 
@@ -26,7 +26,7 @@ class BookingDto {
       bikeIdKey: booking.bikeId,
       stationIdKey: booking.stationId,
       paymentMethodKey: booking.paymentMethod.name,
-      createdAtKey: booking.createdAt.toString()
+      createdAtKey: booking.createdAt.toIso8601String(),
     };
   }
 
